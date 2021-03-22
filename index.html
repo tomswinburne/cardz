@@ -15,8 +15,21 @@
   display: inline-block;
   font-size: 32px;
 }
+h3 {
+  color : gray;
+  font-family:sans-serif;
+  font-style: italic;
+  text-align: center;
+  text-decoration: none;
+  font-size: 20px;
+}
+
 h2 {
-    text-align: center;
+  color : #FF5733;
+  font-family:sans-serif;
+  text-align: center;
+  text-decoration: none;
+  font-size: 32px;
 }
 </style>
 <script>
@@ -96,9 +109,16 @@ h2 {
     chips[(player+1)%2] += pot;
     for(var count=0;count<nplayers;count++) pots[count] = 0;
     set();
-    document.getElementById("status_"+String(bb+1)).innerHTML = "";
-    document.getElementById("status_"+String((bb+1)%2+1)).innerHTML = "*";
-    bb = (bb+1)%2;
+
+    if(chips[player]==0) {
+      document.getElementById("status_"+String(player+1)).innerHTML = "YOU LOSE!";
+      document.getElementById("status_"+String((player+1)%2+1)).innerHTML = "YOU WIN!";
+    }
+    else {
+      document.getElementById("status_"+String(bb+1)).innerHTML = "";
+      document.getElementById("status_"+String((bb+1)%2+1)).innerHTML = "*";
+      bb = (bb+1)%2;
+    }
   };
 
   function switchbb(){
@@ -130,12 +150,12 @@ loser notification
   <div class="content">
     <h2>POKER CHIPZ!!!!</h2>
 
-    <table width="600px">
+    <table width="750px">
       <tr>
         <td><h2><button class="button" type="button" onclick="switchbb()">Switch Big Blind</button></h2>
 </td>
-        <td><h2><img src="bach.jpg" width="150px"></img></h2></td>
-        <td><h2><img src="7pmps2i1cs801.jpg" width="150px"></img></h2></td>
+        <td><h2><img src="bach.jpg" width="180px"></img></h2></td>
+        <td><h2><img src="7pmps2i1cs801.jpg" width="180px"></img></h2></td>
         <td>        <h2><button class="button" type="button" onclick="reset()">Reset</button></h2>
 </td>
       </tr>
@@ -146,37 +166,35 @@ loser notification
         <td></td>
       </tr>
       <tr>
-        <td><h2>Chip Stack: <div id="chips_1">0</div></h2></td>
+        <td><h3>In Pot:</h3> <h2><div id="pots_1">0</div> </h2></td>
 
         <td><h2><button class="button" type="button" onclick="call(0)">Call</button></h2></td>
         <td><h2><button class="button" type="button" onclick="call(1)">Call</button></h2></td>
 
-        <td><h2>Chip Stack: <div id="chips_2">0</div></h2></td>
+        <td><h3>In Pot:</h3> <h2><div id="pots_2">0</div> </h2></td>
       </tr>
       <tr>
-        <td><h2><div id="status_1"></div></h2></td>
-
+        <td><h3>To Call:</h3> <h2><div id="tocall_1">0</div> </h2></td>
         <td><h2><button class="button" type="button" onclick="raise(5,0)">Bet 5</button></h2></td>
         <td><h2><button class="button" type="button" onclick="raise(5,1)">Bet 5</button></h2></td>
-
-        <td><h2><div id="status_2"></div></h2></td>
-
+        <td><h3>To Call:</h3> <h2><div id="tocall_2">0</div> </h2></td>
       </tr>
       <tr>
-        <td><h2>in pot: <div id="pots_1">0</div> </h2></td>
+        <td><h3>Stack:</h3> <h2><div id="chips_1">0</div></h2></td>
 
         <td><h2><button class="button" type="button" onclick="raise(10,0)">Bet 10</button></h2></td>
         <td><h2><button class="button" type="button" onclick="raise(10,1)">Bet 10</button></h2></td>
 
-        <td><h2>in pot: <div id="pots_2">0</div> </h2></td>
+        <td><h3>Stack:</h3> <h2><div id="chips_2">0</div></h2></td>
       </tr>
       <tr>
-        <td><h2>to call: <div id="tocall_1">0</div> </h2></td>
+        <td><h2><div id="status_1"></div></h2></td>
 
-        <td><h2><button class="button" type="button" onclick="fold(0)">Fold / Lose</button></h2></td>
-        <td><h2><button class="button" type="button" onclick="fold(1)">Fold / Lose</button></h2></td>
 
-        <td><h2>to call: <div id="tocall_2">0</div> </h2></td>
+        <td><h2><button class="button" type="button" onclick="fold(0)">Fold</button></h2></td>
+        <td><h2><button class="button" type="button" onclick="fold(1)">Fold</button></h2></td>
+
+        <td><h2><div id="status_2"></div></h2></td>
       </tr>
     </table>
   </div>
