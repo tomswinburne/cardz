@@ -34,7 +34,7 @@ h2 {
 </style>
 <script>
   buy_in = 100;
-  nplayers=2;
+  nplayers=3;
   bb=0;
 
   var chips = [];
@@ -105,26 +105,30 @@ h2 {
 
   function fold(player) {
     var pot=0.;
+    var nplayers=3;
     for(var count=0;count<nplayers;count++) pot += pots[count];
-    chips[(player+1)%2] += pot;
+    chips[(player+1)%nplayers] += pot;
     for(var count=0;count<nplayers;count++) pots[count] = 0;
     set();
 
     if(chips[player]==0) {
+      var nplayers=3;
       document.getElementById("status_"+String(player+1)).innerHTML = "YOU LOSE!";
-      document.getElementById("status_"+String((player+1)%2+1)).innerHTML = "YOU WIN!";
+      document.getElementById("status_"+String((player+1)%nplayers+1)).innerHTML = "YOU WIN!";
     }
     else {
+      var nplayers=3;
       document.getElementById("status_"+String(bb+1)).innerHTML = "";
-      document.getElementById("status_"+String((bb+1)%2+1)).innerHTML = "*";
-      bb = (bb+1)%2;
+      document.getElementById("status_"+String((bb+1)%nplayers+1)).innerHTML = "*";
+      bb = (bb+1)%nplayers;
     }
   };
 
   function switchbb(){
+    var nplayers=3;
     document.getElementById("status_"+String(bb+1)).innerHTML = "";
-    document.getElementById("status_"+String((bb+1)%2+1)).innerHTML = "*";
-    bb = (bb+1)%2;
+    document.getElementById("status_"+String((bb+1)%nplayers+1)).innerHTML = "*";
+    bb = (bb+1)%nplayers;
   };
 
   function initial(){
