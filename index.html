@@ -41,11 +41,15 @@ h2 {
   nplayers=3;
   bb=0;
 
-  var chips = [];
-  for(var count=0;count<nplayers;count++) chips.push(buy_in);
+  var stack = [];
+  for(var count=0;count<nplayers;count++) stack.push(buy_in);
 
   var pots = [];
   for(var count=0;count<nplayers;count++) pots.push(0.0);
+
+  var folded = [];
+  for(var count=0;count<nplayers;count++) folded.push(0);
+
 
   function set(){
 
@@ -61,78 +65,100 @@ h2 {
 
     for(var count=0;count<nplayers;count++) {
 
-      document.getElementById("chips_"+String(count+1)).innerHTML = chips[count];
+      document.getElementById("stack_"+String(count+1)).innerHTML = stack[count];
 
       document.getElementById("pots_"+String(count+1)).innerHTML = pots[count];
 
 
       document.getElementById("tocall_"+String(count+1)).innerHTML = max_pot-pots[count];
 
-      if(chips[count]+pots[count]<=0) {
+      if(stack[count]+pots[count]<=0) {
         document.getElementById("status_"+String(count+1)).innerHTML = "IS OUT!!";
       }
-
     }
 
   };
 
   function reset(){
-
     for(var count=0;count<nplayers;count++) {
-      chips[count] = buy_in;
+      stack[count] = buy_in;
       pots[count] = 0;
+      folded[count] = 0;
     }
-
     set();
     bb=0;
   }
 
   function call(player) {
     var amount=0.;
-    for(var count=0;count<nplayers;count++) if(pots[count]>amount) amount=pots[count];
+    for(var count=0;count<nplayers;count++) 
+      if(pots[count]>amount) amount=pots[count];
     amount -= pots[player];
-    if(chips[player]-amount>=0) {
+    if(stack[player]-amount>=0) {
       pots[player] += amount;
-      chips[player] -= amount;
+      stack[player] -= amount;
     }
     set();
   };
 
 
   function raise(amount,player) {
-    if(chips[player]-amount>=0) {
+    if(stack[player]-amount>=0) {
       pots[player] += amount;
-      chips[player] -= amount;
+      stack[player] -= amount;
     }
     set();
   };
 
   function fold(player) {
-    var pot=0.;
-    var nplayers=3;
-    for(var count=0;count<nplayers;count++) pot += pots[count];
-    chips[(player+1)%nplayers] += pot;
-    for(var count=0;count<nplayers;count++) pots[count] = 0;
-    set();
 
-    if(chips[player]==0) {
-      var nplayers=3;
-      document.getElementById("status_"+String(player+1)).innerHTML = "YOU LOSE!";
-      document.getElementById("status_"+String((player+1)%nplayers+1)).innerHTML = "YOU WIN!";
+    var total_folded=0;
+    for(var count=0;count<nplayers;count++) total_folded += folded[count];
+    
+    var winner=-1;
+    /* is there a winner ? */ 
+    if(total_folded>=nplayers-1) {
+      for(var count=0;count<nplayers;count++) 
+        if(folded[count]==0) winner=count;
     }
-    else {
-      var nplayers=3;
-      document.getElementById("status_"+String(bb+1)).innerHTML = "";
-      document.getElementById("status_"+String((bb+1)%nplayers+1)).innerHTML = "*";
-      bb = (bb+1)%nplayers;
+    
+    if(winner>=0) folded[winner]=1;
+
+    folded[player] = 1;
+    if(player!=winner) {
+      document.getElementById("status_"+String(player+1)).innerHTML="FOLDED!";
+    }
+
+    /* total pot */
+    var pot=0.;
+    for(var count=0;count<nplayers;count++) pot += pots[count];
+    if(winner>=0) {
+      stack[winner] += pot;
+      for(var count=0;count<nplayers;count++) pots[count] = 0;
+    }
+    set();
+    if(stack[player]==0) {
+      document.getElementById("status_"+String(player+1)).innerHTML = "YOU LOSE!";
+    }
+    var zero_stack=0;
+    for(var count=0;count<nplayers;count++) if(stack[count]==0) zero_stack+=1;
+    
+    if(winner>=0) {
+      if(zero_stack==nplayers-1) {
+        document.getElementById("status_"+String(winner+1)).innerHTML="YOU WIN!";
+      } else {
+        document.getElementById("status_"+String(winner+1)).innerHTML="YOU WIN HAND!";
+      }
+      for(var count=0;count<nplayers;count++) folded[count]=0;
     }
   };
 
   function switchbb(){
-    var nplayers=3;
-    document.getElementById("status_"+String(bb+1)).innerHTML = "";
-    document.getElementById("status_"+String((bb+1)%nplayers+1)).innerHTML = "*";
+    for(var count=0;count<nplayers;count++)
+      document.getElementById("status_"+String(count+1)).innerHTML = "";
+    
     bb = (bb+1)%nplayers;
+    document.getElementById("status_"+String(bb+1)).innerHTML="*";
   };
 
   function initial(){
@@ -157,6 +183,8 @@ loser notification
 <body onload="initial()" align="center">
   <div class="content">
     <h2>POKER CHIPZ!!!!</h2>
+    <h3>Every player 'folds' every hand- winner is last to fold</h3>
+    <h3>Switch big blind to reset player status</h3>
 
     <table width="750px">
       <tr>
@@ -194,11 +222,11 @@ loser notification
         
 
         <td><h2><button class="button" type="button" onclick="raise(10,0)">Bet 10</button></h2></td>
-        <td><h3>Stack:</h3> <h2><div id="chips_1">0</div></h2></td>
+        <td><h3>Stack:</h3> <h2><div id="stack_1">0</div></h2></td>
         <td><h2><button class="button" type="button" onclick="raise(10,1)">Bet 10</button></h2></td>
-        <td><h3>Stack:</h3> <h2><div id="chips_2">0</div></h2></td>
+        <td><h3>Stack:</h3> <h2><div id="stack_2">0</div></h2></td>
         <td><h2><button class="button" type="button" onclick="raise(10,2)">Bet 10</button></h2></td>
-        <td><h3>Stack:</h3> <h2><div id="chips_3">0</div></h2></td>
+        <td><h3>Stack:</h3> <h2><div id="stack_3">0</div></h2></td>
       </tr>
       <tr>
         <td><h2><button class="button" type="button" onclick="fold(0)">Fold</button></h2></td>
